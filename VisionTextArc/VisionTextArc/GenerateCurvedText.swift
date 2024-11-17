@@ -19,26 +19,28 @@ public class GenerateCurvedText {
     /// - Parameters:
     ///   - text: The text to cut into single characters
     /// - Returns: Returns a model entity to use
-    public func curveText(text: String, radius: Float = 3.0, angle: Float? = -2.0) -> Entity {
+    public func curveText(text: String, radius: Float = 4.0) -> Entity {
         
         let letterPadding: Float = 0.02
+        let extrusionDepth: Float = 0.03
+        let fontSize: CGFloat = 0.12
+        let baseMaterial = SimpleMaterial(color: .white, isMetallic: false)
         
         var totalAngularSpan: Float = 0.0
         var entities: [ModelEntity] = []
-        var currentAngle: Float = angle!
+        var currentAngle: Float = -radius / 1.5
         
         for char in text {
             let mesh = MeshResource.generateText(
                 String(char),
-                extrusionDepth: 0.03,
-                font: .systemFont(ofSize: 0.12),
+                extrusionDepth: extrusionDepth,
+                font: .systemFont(ofSize: fontSize),
                 containerFrame: .zero,
                 alignment: .center,
                 lineBreakMode: .byCharWrapping
             )
-            let material = SimpleMaterial(color: UIColor(Color(.white)), isMetallic: false)
             
-            let charEntity = ModelEntity(mesh: mesh, materials: [material])
+            let charEntity = ModelEntity(mesh: mesh, materials: [baseMaterial])
             
             if let boundingBox = charEntity.model?.mesh.bounds {
                 let characterWidth = boundingBox.extents.x
@@ -62,8 +64,6 @@ public class GenerateCurvedText {
             finalEntity.addChild(text3D)
         }
         
-        finalEntity.position = SIMD3(x: 0, y: 0.5, z: 0)
-
         return finalEntity
     }
 }
