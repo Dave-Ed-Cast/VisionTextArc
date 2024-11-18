@@ -1,5 +1,5 @@
 //
-//  GenerateCurvedText.swift
+//  TextCurver.swift
 //  VisionTextArc
 //
 //  Created by Davide Castaldi on 15/11/24.
