@@ -8,22 +8,71 @@
 import SwiftUI
 import RealityKit
 
-public class TextCurver {
+public final class TextCurver: Sendable {
     
     public init () {}
     
-    /// Generates 3D curved text using the `generateText` function.
+    /// A configuration object for customizing 3D curved text.
+    ///
+    /// This structure contains parameters that control the appearance and layout of the text
+    /// when displayed along a curve.
+    ///
+    /// - Properties:
+    ///   - `fontSize`: The size of the font used for the text.
+    ///   - `extrusionDepth`: The depth of the 3D extrusion for each character.
+    ///   - `color`: The color of the text.
+    ///   - `roughness`: The roughness of the material applied to the text surface.
+    ///   - `isMetallic`: A boolean indicating if the text material is metallic.
+    ///   - `radius`: The radius of the curve. Larger values make the text appear farther from the center.
+    ///   - `offset`: The position of the text along the curve, in radians.
+    ///   - `letterPadding`: The spacing between letters, allowing control over text density.
+    ///
+    /// - See also: `curveText(_:configuration:)` for how this configuration is applied.
+    public struct Configuration {
+        public var fontSize: CGFloat
+        public var extrusionDepth: Float
+        public var color: UIColor
+        public var roughness: MaterialScalarParameter
+        public var isMetallic: Bool
+        public var radius: Float
+        public var offset: Float
+        public var letterPadding: Float
+        
+        public init(fontSize: CGFloat = 0.12, extrusionDepth: Float = 0.03, color: UIColor = .white, roughness: MaterialScalarParameter = 0, isMetallic: Bool = false, radius: Float = 3.0, offset: Float = 0.0, letterPadding: Float = 0.02) {
+            self.fontSize = fontSize
+            self.extrusionDepth = extrusionDepth
+            self.color = color
+            self.roughness = roughness
+            self.isMetallic = isMetallic
+            self.radius = radius
+            self.offset = offset
+            self.letterPadding = letterPadding
+        }
+    }
+    
+    /// Generates 3D curved text with customizable parameters.
+    ///
+    /// This function creates a 3D text effect by arranging the text along a curve.
+    /// You can adjust the radius, offset, and letter spacing to control the appearance
+    /// of the text in 3D space.
     ///
     /// - Parameters:
-    ///   - text: The text to display
-    ///   - radius: The radius of the curve. The higher, the more distant the text
-    ///   - offset: Bring the text somewhere else on the curve from 0° to 360°
-    /// - Returns: Returns a model entity to use
-    public func curveText(text: String, radius: Float = 3.0, offset: Float = 0.0) -> Entity {
-        let letterPadding: Float = 0.02
-        let extrusionDepth: Float = 0.03
-        let fontSize: CGFloat = 0.12
-        let baseMaterial = SimpleMaterial(color: .white, isMetallic: false)
+    ///   - text: The text to display.
+    ///   - configuration: A `Configuration` object specifying the font size, extrusion depth, color, roughness,
+    ///     material properties, and layout of the text on the curve.
+    ///     - See also: `Configuration` for a full description of the configuration options.
+    ///
+    /// - Returns:
+    ///   An `Entity` instance that represents the generated 3D text, ready for display.
+    ///
+    /// - See also: `Configuration` for detailed control over text appearance and layout.
+    public func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
+        
+        let baseMaterial = SimpleMaterial(
+            color: configuration.color,
+            roughness: configuration.roughness,
+            isMetallic: configuration.isMetallic
+        )
         
         var totalAngularSpan: Float = 0.0
         var charEntities: [(entity: ModelEntity, width: Float)] = []
@@ -31,30 +80,31 @@ public class TextCurver {
         for char in text {
             let mesh = MeshResource.generateText(
                 String(char),
-                extrusionDepth: extrusionDepth,
-                font: .systemFont(ofSize: fontSize),
+                extrusionDepth: configuration.extrusionDepth,
+                font: .systemFont(ofSize: configuration.fontSize),
                 containerFrame: .zero,
                 alignment: .center,
                 lineBreakMode: .byCharWrapping
             )
             
             let charEntity = ModelEntity(mesh: mesh, materials: [baseMaterial])
+            
             if let boundingBox = charEntity.model?.mesh.bounds {
                 let characterWidth = boundingBox.extents.x
-                let angleIncrement = (characterWidth + letterPadding) / radius
+                let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
                 totalAngularSpan += angleIncrement
                 charEntities.append((entity: charEntity, width: characterWidth))
             }
         }
         
-        var currentAngle: Float = -totalAngularSpan / 2.0 + offset
+        var currentAngle: Float = -totalAngularSpan / 2.0 + configuration.offset
         
         let finalEntity = Entity()
         for (charEntity, characterWidth) in charEntities {
-            let angleIncrement = (characterWidth + letterPadding) / radius
+            let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
             
-            let x = radius * sin(currentAngle)
-            let z = -radius * cos(currentAngle)
+            let x = configuration.radius * sin(currentAngle)
+            let z = -configuration.radius * cos(currentAngle)
             
             let lookAtUser = SIMD3(x, 0, z)
             let lookAtUserNormalized = normalize(lookAtUser)
