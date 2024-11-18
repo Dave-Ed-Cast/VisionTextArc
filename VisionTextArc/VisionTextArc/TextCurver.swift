@@ -17,6 +17,7 @@ public class TextCurver {
     /// - Parameters:
     ///   - text: The text to display
     ///   - radius: The radius of the curve. The higher, the more distant the text
+    ///   - offset: Bring the text somewhere else on the curve from 0° to 360°
     /// - Returns: Returns a model entity to use
     public func curveText(text: String, radius: Float = 3.0, offset: Float = 0.0) -> Entity {
         let letterPadding: Float = 0.02
@@ -54,8 +55,8 @@ public class TextCurver {
             
             let x = radius * sin(currentAngle)
             let z = -radius * cos(currentAngle)
-            let lookAtUser = SIMD3(x, 0, z)
             
+            let lookAtUser = SIMD3(x, 0, z)
             let lookAtUserNormalized = normalize(lookAtUser)
             
             charEntity.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: lookAtUserNormalized)
