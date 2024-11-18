@@ -1,6 +1,6 @@
 # VisionTextArc
 
-![Swift](https://img.shields.io/badge/Swift-6-blu) ![Platform](https://img.shields.io/badge/Platform-visionOS-red) ![License](https://img.shields.io/badge/License-GNU-green)
+![Swift](https://img.shields.io/badge/Swift-6-blue) ![Platform](https://img.shields.io/badge/Platform-visionOS-red) ![License](https://img.shields.io/badge/License-GNU-green)
 
 `VisionTextArc` is a Swift framework that generates 3D curved text with customizable parameters for creative visualizations in visionOS apps. Built on **RealityKit**, it provides an intuitive API for creating stunning, curved text effects.
 
