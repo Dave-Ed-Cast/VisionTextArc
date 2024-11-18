@@ -23,7 +23,7 @@ Add `VisionTextArc` to your project using the Swift Package Manager:
 
 1. Open your project in Xcode.
 2. Navigate to **File > Add Packages...**.
-3. Enter the repository URL: https://github.com/yourusername/VisionTextArc
+3. Enter the repository URL: [https://github.com/Dave-Ed-Cast/VisionTextArc](https://github.com/Dave-Ed-Cast/VisionTextArc)
 4. Select the latest version and add the package.
 
 ---
