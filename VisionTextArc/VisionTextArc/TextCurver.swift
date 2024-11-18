@@ -8,10 +8,8 @@
 import SwiftUI
 import RealityKit
 
-public final class TextCurver: Sendable {
-    
-    public init () {}
-    
+public enum TextCurver: Sendable {
+        
     /// A configuration object for customizing 3D curved text.
     ///
     /// This structure contains parameters that control the appearance and layout of the text
@@ -74,7 +72,7 @@ public final class TextCurver: Sendable {
     ///     let text4 = foo.curveText(string4, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
     ///     let text5 = foo.curveText(string5, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
-    public func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
+    public static func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
         
         let baseMaterial = SimpleMaterial(
             color: configuration.color,
