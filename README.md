@@ -37,7 +37,7 @@ import VisionTextArc
 
 let textCurver = TextCurver.self
 
-//Custom cnfiguration, that is optional. More in the documentation
+//Optional custom cnfiguration. More in the documentation
 let configuration = TextCurver.Configuration(
     fontSize: 0.15,
     extrusionDepth: 0.1,
