@@ -6,6 +6,11 @@
 
 ---
 
+## Why is curved text needed in visionOS
+Curved text in visionOS is useful for a variety of reasons, mainly to enhance the user experience and make it more natural and immersive in 3D spaces. Ever thought of creating a mindfulness app based on a scenery with some 3D text that is fitting to the space? Now you can with a proper curving of it!
+
+---
+
 ## Features
 
 - 🖋️ **Customizable 3D Text**: Adjust font size, extrusion depth, color, and more.
