@@ -58,14 +58,22 @@ public final class TextCurver: Sendable {
     ///
     /// - Parameters:
     ///   - text: The text to display.
-    ///   - configuration: A `Configuration` object specifying the font size, extrusion depth, color, roughness,
-    ///     material properties, and layout of the text on the curve.
-    ///     - See also: `Configuration` for a full description of the configuration options.
+    ///   - configuration: An object specifying the parameters of the text on the curve.
     ///
     /// - Returns:
     ///   An `Entity` instance that represents the generated 3D text, ready for display.
-    ///
     /// - See also: `Configuration` for detailed control over text appearance and layout.
+    ///
+    /// The following example is a simple how to use:
+    ///
+    ///     let foo = TextCurver()
+    ///
+    ///     let text = foo.curveText(string1)
+    ///     let text2 = foo.curveText(string2, configuration: .init(color: .green, roughness: 1.0, isMetallic: true))
+    ///     let text3 = foo.curveText(string3, configuration: .init(offset: -.pi / 8))
+    ///     let text4 = foo.curveText(string4, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
+    ///     let text5 = foo.curveText(string5, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
+    ///
     public func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
         
         let baseMaterial = SimpleMaterial(
