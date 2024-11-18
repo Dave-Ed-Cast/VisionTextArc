@@ -18,7 +18,7 @@ public class TextCurver {
     ///   - text: The text to display
     ///   - radius: The radius of the curve. The higher, the more distant the text
     /// - Returns: Returns a model entity to use
-    public func curveText(text: String, radius: Float = 3.0) -> Entity {
+    public func curveText(text: String, radius: Float = 3.0, offset: Float = 0.0) -> Entity {
         let letterPadding: Float = 0.02
         let extrusionDepth: Float = 0.03
         let fontSize: CGFloat = 0.12
@@ -46,7 +46,7 @@ public class TextCurver {
             }
         }
         
-        var currentAngle: Float = -totalAngularSpan / 2.0
+        var currentAngle: Float = -totalAngularSpan / 2.0 + offset
         
         let finalEntity = Entity()
         for (charEntity, characterWidth) in charEntities {
