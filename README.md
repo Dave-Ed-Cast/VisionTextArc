@@ -13,7 +13,7 @@ Curved text in visionOS is useful for a variety of reasons, mainly to enhance th
 
 ## Features
 
-- 🖋️ **Customizable 3D Text**: Adjust font size, extrusion depth, color, and more.
+- 🖋️ **Customizable 3D Text**: Adjust font, size, extrusion depth, color, and more.
 - 🔄 **Flexible Curvature**: Control radius, offset, and letter spacing.
 - ✨ **Material Customization**: Fine-tune roughness and metallic properties.
 - 📐 **Easy-to-Use API**: Minimal configuration for powerful results.
