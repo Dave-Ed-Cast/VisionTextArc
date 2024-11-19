@@ -45,7 +45,21 @@ public enum TextCurver: Sendable {
         public var lineBreakMode: CTLineBreakMode
         
         
-        public init(fontSize: CGFloat = 0.12, font: MeshResource.Font? = nil, extrusionDepth: Float = 0.03, color: UIColor = .white, roughness: MaterialScalarParameter = 0, isMetallic: Bool = false, radius: Float = 3.0, offset: Float = 0.0, letterPadding: Float = 0.02, containerFrame: CGRect? = nil, alignment: CTTextAlignment? = nil, lineBreakMode: CTLineBreakMode? = nil) {
+        public init(
+            fontSize: CGFloat = 0.12,
+            font: MeshResource.Font? = nil,
+            extrusionDepth: Float = 0.03,
+            color: UIColor = .white,
+            roughness: MaterialScalarParameter = 0,
+            isMetallic: Bool = false,
+            radius: Float = 3.0,
+            offset: Float = 0.0,
+            letterPadding: Float = 0.02,
+            containerFrame: CGRect? = nil,
+            alignment: CTTextAlignment? = nil,
+            lineBreakMode: CTLineBreakMode? = nil
+        ) {
+            
             self.fontSize = fontSize
             self.font = font ?? .systemFont(ofSize: fontSize)
             self.extrusionDepth = extrusionDepth
@@ -64,8 +78,7 @@ public enum TextCurver: Sendable {
     /// Generates 3D curved text with customizable parameters.
     ///
     /// This function creates a 3D text effect by arranging the text along a curve.
-    /// You can adjust the radius, offset, and letter spacing to control the appearance
-    /// of the text in 3D space.
+    /// You can adjust many different parameters of the text in 3D space.
     ///
     /// - Parameters:
     ///   - text: The text to display.
@@ -77,13 +90,14 @@ public enum TextCurver: Sendable {
     ///
     /// The following example is a simple how to use:
     ///
-    ///     let foo = TextCurver()
+    ///     let foo = TextCurver.self
     ///
-    ///     let text = foo.curveText(string1)
-    ///     let text2 = foo.curveText(string2, configuration: .init(color: .green, roughness: 1.0, isMetallic: true))
-    ///     let text3 = foo.curveText(string3, configuration: .init(offset: -.pi / 8))
-    ///     let text4 = foo.curveText(string4, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
-    ///     let text5 = foo.curveText(string5, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
+    ///     let text1 = foo.curveText(string1)
+    ///     let text2 = foo.curveText(string2, configuration: .init(font: UIFont(name: "Marion", size: 0.2)))
+    ///     let text3 = foo.curveText(string3, configuration: .init(color: .green, roughness: 1.0, isMetallic: true))
+    ///     let text4 = foo.curveText(string4, configuration: .init(offset: -.pi / 8))
+    ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
+    ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
     public static func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
         
