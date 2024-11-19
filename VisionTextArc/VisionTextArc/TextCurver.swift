@@ -55,9 +55,9 @@ public enum TextCurver: Sendable {
             radius: Float = 3.0,
             offset: Float = 0.0,
             letterPadding: Float = 0.02,
-            containerFrame: CGRect? = nil,
-            alignment: CTTextAlignment? = nil,
-            lineBreakMode: CTLineBreakMode? = nil
+            containerFrame: CGRect = .zero,
+            alignment: CTTextAlignment = .center,
+            lineBreakMode: CTLineBreakMode = .byCharWrapping
         ) {
             
             self.fontSize = fontSize
@@ -69,9 +69,9 @@ public enum TextCurver: Sendable {
             self.radius = radius
             self.offset = offset
             self.letterPadding = letterPadding
-            self.containerFrame = containerFrame ?? .zero
-            self.alignment = alignment ?? .center
-            self.lineBreakMode = lineBreakMode ?? .byCharWrapping
+            self.containerFrame = containerFrame
+            self.alignment = alignment
+            self.lineBreakMode = lineBreakMode
         }
     }
     
