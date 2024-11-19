@@ -14,22 +14,27 @@ public final class TextCurver: Sendable {
     
     /// A configuration object for customizing 3D curved text.
     ///
-    /// This structure contains parameters that control the appearance and layout of the text
-    /// when displayed along a curve.
+    /// This structure defines parameters for styling and positioning text along a 3D curve.
+    /// It provides fine-grained control over text appearance, material properties, and layout.
     ///
     /// - Properties:
-    ///   - `fontSize`: The size of the font used for the text.
-    ///   - `extrusionDepth`: The depth of the 3D extrusion for each character.
-    ///   - `color`: The color of the text.
-    ///   - `roughness`: The roughness of the material applied to the text surface.
-    ///   - `isMetallic`: A boolean indicating if the text material is metallic.
-    ///   - `radius`: The radius of the curve. Larger values make the text appear farther from the center.
-    ///   - `offset`: The position of the text along the curve, in radians.
-    ///   - `letterPadding`: The spacing between letters, allowing control over text density.
+    ///   - `fontSize`: The size of the font used for rendering the text.
+    ///   - `font`: The font resource used for creating the text geometry.
+    ///   - `extrusionDepth`: The depth of the 3D extrusion applied to each character, creating a volumetric effect.
+    ///   - `color`: The color applied to the text material.
+    ///   - `roughness`: The roughness of the text material's surface, affecting light scattering.
+    ///   - `isMetallic`: A boolean value indicating whether the text material exhibits metallic properties.
+    ///   - `radius`: The radius of the curve on which the text is laid out. Larger values position the text farther from the center of curvature.
+    ///   - `offset`: The angular position of the text along the curve, measured in radians.
+    ///   - `letterPadding`: The spacing between consecutive letters, controlling text density along the curve.
+    ///   - `containerFrame`: The 2D frame defining the text container size and positioning within the scene.
+    ///   - `alignment`: The horizontal alignment of the text within its container (e.g., left, center, right).
+    ///   - `lineBreakMode`: The strategy for handling line breaks, defining how text wraps within the container frame.
     ///
     /// - See also: `curveText(_:configuration:)` for how this configuration is applied.
     public struct Configuration {
         public var fontSize: CGFloat
+        public var font: MeshResource.Font
         public var extrusionDepth: Float
         public var color: UIColor
         public var roughness: MaterialScalarParameter
@@ -37,9 +42,14 @@ public final class TextCurver: Sendable {
         public var radius: Float
         public var offset: Float
         public var letterPadding: Float
+        public var containerFrame: CGRect
+        public var alignment: CTTextAlignment
+        public var lineBreakMode: CTLineBreakMode
         
-        public init(fontSize: CGFloat = 0.12, extrusionDepth: Float = 0.03, color: UIColor = .white, roughness: MaterialScalarParameter = 0, isMetallic: Bool = false, radius: Float = 3.0, offset: Float = 0.0, letterPadding: Float = 0.02) {
+        
+        public init(fontSize: CGFloat = 0.12, font: MeshResource.Font? = nil, extrusionDepth: Float = 0.03, color: UIColor = .white, roughness: MaterialScalarParameter = 0, isMetallic: Bool = false, radius: Float = 3.0, offset: Float = 0.0, letterPadding: Float = 0.02, containerFrame: CGRect? = nil, alignment: CTTextAlignment? = nil, lineBreakMode: CTLineBreakMode? = nil) {
             self.fontSize = fontSize
+            self.font = font ?? .systemFont(ofSize: fontSize)
             self.extrusionDepth = extrusionDepth
             self.color = color
             self.roughness = roughness
@@ -47,6 +57,9 @@ public final class TextCurver: Sendable {
             self.radius = radius
             self.offset = offset
             self.letterPadding = letterPadding
+            self.containerFrame = containerFrame ?? .zero
+            self.alignment = alignment ?? .center
+            self.lineBreakMode = lineBreakMode ?? .byCharWrapping
         }
     }
     
@@ -89,10 +102,10 @@ public final class TextCurver: Sendable {
             let mesh = MeshResource.generateText(
                 String(char),
                 extrusionDepth: configuration.extrusionDepth,
-                font: .systemFont(ofSize: configuration.fontSize),
-                containerFrame: .zero,
-                alignment: .center,
-                lineBreakMode: .byCharWrapping
+                font: configuration.font,
+                containerFrame: configuration.containerFrame,
+                alignment: configuration.alignment,
+                lineBreakMode: configuration.lineBreakMode
             )
             
             let charEntity = ModelEntity(mesh: mesh, materials: [baseMaterial])
