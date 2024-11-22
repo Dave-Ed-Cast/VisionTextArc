@@ -46,7 +46,6 @@ public final class TextCurver: Sendable {
         public var alignment: CTTextAlignment
         public var lineBreakMode: CTLineBreakMode
         
-        
         public init(
             fontSize: CGFloat = 0.12,
             font: MeshResource.Font? = nil,
@@ -57,9 +56,9 @@ public final class TextCurver: Sendable {
             radius: Float = 3.0,
             offset: Float = 0.0,
             letterPadding: Float = 0.02,
-            containerFrame: CGRect? = nil,
-            alignment: CTTextAlignment? = nil,
-            lineBreakMode: CTLineBreakMode? = nil
+            containerFrame: CGRect = .zero,
+            alignment: CTTextAlignment = .center,
+            lineBreakMode: CTLineBreakMode = .byCharWrapping
         ) {
             
             self.fontSize = fontSize
@@ -68,12 +67,12 @@ public final class TextCurver: Sendable {
             self.color = color
             self.roughness = roughness
             self.isMetallic = isMetallic
-            self.radius = radius
+            self.radius = max(radius, 0.01)
             self.offset = offset
-            self.letterPadding = letterPadding
-            self.containerFrame = containerFrame ?? .zero
-            self.alignment = alignment ?? .center
-            self.lineBreakMode = lineBreakMode ?? .byCharWrapping
+            self.letterPadding = max(letterPadding, 0)
+            self.containerFrame = containerFrame
+            self.alignment = alignment
+            self.lineBreakMode = lineBreakMode
         }
     }
     
@@ -101,13 +100,16 @@ public final class TextCurver: Sendable {
     ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
     ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
-    public func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
+    public static func curveText(_ text: String = "Hello, World!", configuration: Configuration = .init()) -> Entity {
         
         let baseMaterial = SimpleMaterial(
             color: configuration.color,
             roughness: configuration.roughness,
             isMetallic: configuration.isMetallic
         )
+        
+        let letterPadding = configuration.letterPadding
+        let radius = configuration.radius
         
         var totalAngularSpan: Float = 0.0
         var charEntities: [(entity: ModelEntity, width: Float)] = []
@@ -126,7 +128,7 @@ public final class TextCurver: Sendable {
             
             if let boundingBox = charEntity.model?.mesh.bounds {
                 let characterWidth = boundingBox.extents.x
-                let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
+                let angleIncrement = (characterWidth + letterPadding) / radius
                 totalAngularSpan += angleIncrement
                 charEntities.append((entity: charEntity, width: characterWidth))
             }
@@ -136,10 +138,10 @@ public final class TextCurver: Sendable {
         
         let finalEntity = Entity()
         for (charEntity, characterWidth) in charEntities {
-            let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
+            let angleIncrement = (characterWidth + letterPadding) / radius
             
-            let x = configuration.radius * sin(currentAngle)
-            let z = -configuration.radius * cos(currentAngle)
+            let x = radius * sin(currentAngle)
+            let z = -radius * cos(currentAngle)
             
             let lookAtUser = SIMD3(x, 0, z)
             let lookAtUserNormalized = normalize(lookAtUser)
@@ -154,4 +156,5 @@ public final class TextCurver: Sendable {
         
         return finalEntity
     }
+    
 }
