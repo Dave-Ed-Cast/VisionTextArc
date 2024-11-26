@@ -44,7 +44,6 @@ public enum TextCurver: Sendable {
         public var alignment: CTTextAlignment
         public var lineBreakMode: CTLineBreakMode
         
-        
         public init(
             fontSize: CGFloat = 0.12,
             font: MeshResource.Font? = nil,
@@ -66,9 +65,9 @@ public enum TextCurver: Sendable {
             self.color = color
             self.roughness = roughness
             self.isMetallic = isMetallic
-            self.radius = radius
+            self.radius = max(radius, 0.01)
             self.offset = offset
-            self.letterPadding = letterPadding
+            self.letterPadding = max(letterPadding, 0)
             self.containerFrame = containerFrame
             self.alignment = alignment
             self.lineBreakMode = lineBreakMode
@@ -99,6 +98,7 @@ public enum TextCurver: Sendable {
     ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
     ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
+
     public static func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
         
         let baseMaterial = SimpleMaterial(
@@ -106,6 +106,9 @@ public enum TextCurver: Sendable {
             roughness: configuration.roughness,
             isMetallic: configuration.isMetallic
         )
+        
+        let letterPadding = configuration.letterPadding
+        let radius = configuration.radius
         
         var totalAngularSpan: Float = 0.0
         var charEntities: [(entity: ModelEntity, width: Float)] = []
@@ -124,7 +127,7 @@ public enum TextCurver: Sendable {
             
             if let boundingBox = charEntity.model?.mesh.bounds {
                 let characterWidth = boundingBox.extents.x
-                let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
+                let angleIncrement = (characterWidth + letterPadding) / radius
                 totalAngularSpan += angleIncrement
                 charEntities.append((entity: charEntity, width: characterWidth))
             }
@@ -134,10 +137,10 @@ public enum TextCurver: Sendable {
         
         let finalEntity = Entity()
         for (charEntity, characterWidth) in charEntities {
-            let angleIncrement = (characterWidth + configuration.letterPadding) / configuration.radius
+            let angleIncrement = (characterWidth + letterPadding) / radius
             
-            let x = configuration.radius * sin(currentAngle)
-            let z = -configuration.radius * cos(currentAngle)
+            let x = radius * sin(currentAngle)
+            let z = -radius * cos(currentAngle)
             
             let lookAtUser = SIMD3(x, 0, z)
             let lookAtUserNormalized = normalize(lookAtUser)
@@ -152,4 +155,5 @@ public enum TextCurver: Sendable {
         
         return finalEntity
     }
+    
 }

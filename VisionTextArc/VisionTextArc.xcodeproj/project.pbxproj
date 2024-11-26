@@ -10,22 +10,9 @@
 		3E6B72E42CE78E2700984784 /* VisionTextArc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VisionTextArc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3E6B72EB2CE78E2700984784 /* Exceptions for "VisionTextArc" folder in "VisionTextArc" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				VisionTextArc.h,
-			);
-			target = 3E6B72E32CE78E2700984784 /* VisionTextArc */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3E6B72E62CE78E2700984784 /* VisionTextArc */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				3E6B72EB2CE78E2700984784 /* Exceptions for "VisionTextArc" folder in "VisionTextArc" target */,
-			);
 			path = VisionTextArc;
 			sourceTree = "<group>";
 		};
