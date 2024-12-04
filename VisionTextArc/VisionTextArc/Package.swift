@@ -6,8 +6,6 @@ import PackageDescription
 let package = Package(
     name: "VisionTextArc",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
         .visionOS(.v1),
     ],
     products: [
