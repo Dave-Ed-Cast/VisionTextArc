@@ -9,7 +9,7 @@ import SwiftUI
 import RealityKit
 
 @MainActor
-@available(visionOS 1.0, *)
+@available(visionOS 1.0, *, iOS 13.0, *)
 public enum TextCurver: Sendable {
         
     /// A configuration object for customizing 3D curved text.
@@ -34,6 +34,7 @@ public enum TextCurver: Sendable {
     ///
     /// - See also: `curveText(_:configuration:)` for how this configuration is applied.
     /// 
+    
     @MainActor
     public struct Configuration {
         public var fontSize: CGFloat
