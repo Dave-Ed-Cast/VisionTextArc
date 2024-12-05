@@ -15,14 +15,15 @@ let package = Package(
             targets: ["VisionTextArc"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Dave-Ed-Cast/VisionTextArc.git", from: "1.0.0"),
+        // Add dependencies here if this package depends on other packages,
+        // but do not add a dependency on itself.
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "VisionTextArc",
-            dependencies: ["VisionTextArc"],
+            dependencies: [],
             path: "Sources")
     ]
 )
