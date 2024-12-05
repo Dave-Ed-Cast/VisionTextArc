@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import VisionTextArc
 import RealityKit
 
 @MainActor
+@available(visionOS 1.0, *)
 public enum TextCurver: Sendable {
         
     /// A configuration object for customizing 3D curved text.
@@ -101,7 +103,7 @@ public enum TextCurver: Sendable {
     ///     let text1 = foo.curveText(string1)
     ///     let text2 = foo.curveText(string2, configuration: .init(font: UIFont(name: "Marion", size: 0.2)))
     ///     let text3 = foo.curveText(string3, configuration: .init(color: .green, roughness: 1.0, isMetallic: true))
-    ///     let text4 = foo.curveText(string4, configuration: .init(offset: -.pi / 8))
+    ///     let text4 = foo.curveText(string4, configuration: .init(offset: -.pi / 2))
     ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
     ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
