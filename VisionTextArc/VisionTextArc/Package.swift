@@ -15,7 +15,7 @@ let package = Package(
             targets: ["VisionTextArc"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Dave-Ed-Cast/VisionTextArc.git", from: "1.0"),
+        .package(url: "https://github.com/Dave-Ed-Cast/VisionTextArc.git", from: "1.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,10 +23,6 @@ let package = Package(
         .target(
             name: "VisionTextArc",
             dependencies: ["VisionTextArc"],
-            path: "Sources"),
-        .testTarget(
-            name: "VisionTextArcTests",
-            dependencies: ["VisionTextArc"]
-        ),
+            path: "Sources")
     ]
 )
