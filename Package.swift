@@ -25,6 +25,6 @@ let package = Package(
         .target(
             name: "VisionTextArc",
             dependencies: [],
-            path: "Sources/VisionTextArc")
+            path: "Sources/CircularText")
     ]
 )
