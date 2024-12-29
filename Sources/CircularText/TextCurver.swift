@@ -11,7 +11,7 @@ import RealityKit
 @MainActor
 @available(visionOS 1.0, *, iOS 13.0, *)
 public enum TextCurver: Sendable {
-        
+    
     /// A configuration object for customizing 3D curved text.
     ///
     /// This structure defines parameters for styling and positioning text along a 3D curve.
@@ -33,7 +33,7 @@ public enum TextCurver: Sendable {
     ///   - `lineBreakMode`: The strategy for handling line breaks, defining how text wraps within the container frame.
     ///
     /// - See also: `curveText(_:configuration:)` for how this configuration is applied.
-    /// 
+    ///
     
     @MainActor
     public struct Configuration {
@@ -50,6 +50,7 @@ public enum TextCurver: Sendable {
         public var containerFrame: CGRect
         public var alignment: CTTextAlignment
         public var lineBreakMode: CTLineBreakMode
+        public var animation: Bool
         
         public init(
             fontSize: CGFloat = 0.12,
@@ -64,7 +65,8 @@ public enum TextCurver: Sendable {
             letterPadding: Float = 0.02,
             containerFrame: CGRect = .zero,
             alignment: CTTextAlignment = .center,
-            lineBreakMode: CTLineBreakMode = .byCharWrapping
+            lineBreakMode: CTLineBreakMode = .byCharWrapping,
+            animation: Bool = false
         ) {
             
             self.fontSize = fontSize
@@ -80,6 +82,7 @@ public enum TextCurver: Sendable {
             self.containerFrame = containerFrame
             self.alignment = alignment
             self.lineBreakMode = lineBreakMode
+            self.animation = animation
         }
     }
     
@@ -131,7 +134,8 @@ public enum TextCurver: Sendable {
             offset: configuration.offset,
             totalAngularSpan: totalAngularSpan,
             letterPadding: configuration.letterPadding,
-            yPosition: configuration.yPosition
+            yPosition: configuration.yPosition,
+            animation: configuration.animation
         )
         
         return finalEntity
@@ -207,7 +211,8 @@ public enum TextCurver: Sendable {
         offset: Float,
         totalAngularSpan: Float,
         letterPadding: Float,
-        yPosition: Float
+        yPosition: Float,
+        animation: Bool
     ) -> Entity {
         
         let finalEntity = Entity()
@@ -225,11 +230,32 @@ public enum TextCurver: Sendable {
             char.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: lookAtUserNormalized)
             char.position = SIMD3(x, 0, z)
             
+            if animation {
+                let yAxis: SIMD3<Float> = [0, 1, 0]
+                let startingPosition = char.position
+                
+                
+                let orbit = OrbitAnimation(
+                    name: "orbit",
+                    duration: 300,
+                    axis: yAxis,
+                    startTransform: Transform(translation: startingPosition),
+                    spinClockwise: false,
+                    orientToPath: true,
+                    rotationCount: 6,
+                    bindTarget: .transform
+                )
+                
+                let orbitAnimation = try! AnimationResource.generate(with: orbit)
+                char.playAnimation(orbitAnimation)
+            }
+            
             finalEntity.addChild(char)
             currentAngle += angleIncrement
         }
         
         finalEntity.position.y = yPosition
+        
         return finalEntity
     }
     
