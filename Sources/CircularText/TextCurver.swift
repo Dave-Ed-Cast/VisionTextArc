@@ -50,7 +50,7 @@ public enum TextCurver: Sendable {
         public var containerFrame: CGRect
         public var alignment: CTTextAlignment
         public var lineBreakMode: CTLineBreakMode
-        public var animation: Bool
+        public var animationProvider: ((ModelEntity, Transform) -> AnimationResource?)?
         
         public init(
             fontSize: CGFloat = 0.12,
@@ -66,7 +66,7 @@ public enum TextCurver: Sendable {
             containerFrame: CGRect = .zero,
             alignment: CTTextAlignment = .center,
             lineBreakMode: CTLineBreakMode = .byCharWrapping,
-            animation: Bool = false
+            animationProvider: ((ModelEntity, Transform) -> AnimationResource?)? = nil
         ) {
             
             self.fontSize = fontSize
@@ -82,7 +82,7 @@ public enum TextCurver: Sendable {
             self.containerFrame = containerFrame
             self.alignment = alignment
             self.lineBreakMode = lineBreakMode
-            self.animation = animation
+            self.animationProvider = animationProvider ?? nil
         }
     }
     
@@ -110,6 +110,30 @@ public enum TextCurver: Sendable {
     ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
     ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
     ///
+    /// The usual SwiftUI `withAnimation` is not supported, however, in RealityViews.
+    /// For that reason we require to leverage the `AnimationResource`
+    ///
+    /// In this package it is supported and here is an example of how you can implement it:
+    ///
+    ///     let orbit =let yAxis: SIMD3<Float> = [0, 1, 0]
+    ///     let startingPosition = char.position
+    ///
+    ///
+    ///     let orbit = OrbitAnimation(
+    ///         name: "orbit",
+    ///         duration: 300,
+    ///         axis: yAxis,
+    ///         startTransform: Transform(translation: startingPosition),
+    ///         spinClockwise: false,
+    ///         orientToPath: true,
+    ///         rotationCount: 6,
+    ///         bindTarget: .transform
+    ///     )
+    ///
+    ///     let orbitAnimation = try! AnimationResource.generate(with: orbit)
+    ///
+    ///     let text1 = foo.curveText(string1, configuration: .init(animation: orbitAnimation))
+    ///
     @MainActor
     public static func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
         
@@ -135,7 +159,7 @@ public enum TextCurver: Sendable {
             totalAngularSpan: totalAngularSpan,
             letterPadding: configuration.letterPadding,
             yPosition: configuration.yPosition,
-            animation: configuration.animation
+            animationProvider: configuration.animationProvider
         )
         
         return finalEntity
@@ -212,12 +236,12 @@ public enum TextCurver: Sendable {
         totalAngularSpan: Float,
         letterPadding: Float,
         yPosition: Float,
-        animation: Bool
+        animationProvider: ((ModelEntity, Transform) -> AnimationResource?)?
     ) -> Entity {
         
         let finalEntity = Entity()
         var currentAngle: Float = -totalAngularSpan / 2.0 + offset
-        
+                
         for (char, characterWidth) in chars {
             let angleIncrement = (characterWidth + letterPadding) / radius
             
@@ -230,24 +254,10 @@ public enum TextCurver: Sendable {
             char.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: lookAtUserNormalized)
             char.position = SIMD3(x, 0, z)
             
-            if animation {
-                let yAxis: SIMD3<Float> = [0, 1, 0]
-                let startingPosition = char.position
-                
-                
-                let orbit = OrbitAnimation(
-                    name: "orbit",
-                    duration: 300,
-                    axis: yAxis,
-                    startTransform: Transform(translation: startingPosition),
-                    spinClockwise: false,
-                    orientToPath: true,
-                    rotationCount: 6,
-                    bindTarget: .transform
-                )
-                
-                let orbitAnimation = try! AnimationResource.generate(with: orbit)
-                char.playAnimation(orbitAnimation)
+            let charTransform = Transform(rotation: char.orientation, translation: char.position)
+            
+            if let animation = animationProvider?(char, charTransform) {
+                char.playAnimation(animation)
             }
             
             finalEntity.addChild(char)
@@ -258,5 +268,4 @@ public enum TextCurver: Sendable {
         
         return finalEntity
     }
-    
 }
