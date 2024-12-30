@@ -19,7 +19,7 @@ public enum TextCurver: Sendable {
     ///
     /// - Properties:
     ///   - `fontSize`: The size of the font used for rendering the text.
-    ///   - `font`: The font resource used for creating the text geometry.
+    ///   - `font`: The font resource type used for creating the text geometry.
     ///   - `extrusionDepth`: The depth of the 3D extrusion applied to each character, creating a volumetric effect.
     ///   - `color`: The color applied to the text material.
     ///   - `roughness`: The roughness of the text material's surface, affecting light scattering.
@@ -31,9 +31,9 @@ public enum TextCurver: Sendable {
     ///   - `containerFrame`: The 2D frame defining the text container size and positioning within the scene.
     ///   - `alignment`: The horizontal alignment of the text within its container (e.g., left, center, right).
     ///   - `lineBreakMode`: The strategy for handling line breaks, defining how text wraps within the container frame.
+    ///   - `animationProvider`: The provider used in Reality Composer Pro, to create animation such as an Orbit
     ///
     /// - See also: `curveText(_:configuration:)` for how this configuration is applied.
-    ///
     
     @MainActor
     public struct Configuration {
@@ -105,34 +105,28 @@ public enum TextCurver: Sendable {
     ///
     ///     let text1 = foo.curveText(string1)
     ///     let text2 = foo.curveText(string2, configuration: .init(font: UIFont(name: "Marion", size: 0.2)))
-    ///     let text3 = foo.curveText(string3, configuration: .init(color: .green, roughness: 1.0, isMetallic: true))
-    ///     let text4 = foo.curveText(string4, configuration: .init(offset: -.pi / 2))
-    ///     let text5 = foo.curveText(string5, configuration: .init(extrusionDepth: 0.15, radius: 4.0))
-    ///     let text6 = foo.curveText(string6, configuration: .init(fontSize: 0.15, letterPadding: 0.05))
+    ///     let text3 = foo.curveText(string4, configuration: .init(offset: -.pi / 2, radius: 4.0))
     ///
     /// The usual SwiftUI `withAnimation` is not supported, however, in RealityViews.
-    /// For that reason we require to leverage the `AnimationResource`
+    /// For that reason use `AnimationResource`.
     ///
-    /// In this package it is supported and here is an example of how you can implement it:
+    /// Here is a simple example of how to use such structure:
     ///
-    ///     let orbit =let yAxis: SIMD3<Float> = [0, 1, 0]
-    ///     let startingPosition = char.position
+    ///     let customOrbitAnimationProvider: (ModelEntity, Transform) -> AnimationResource? = { char, transform in
+    ///         let orbit = OrbitAnimation(
+    ///             name: "orbit_\(char.name)",
+    ///             duration: 300,
+    ///             axis: [0, 1, 0],
+    ///             startTransform: transform,
+    ///             spinClockwise: false,
+    ///             orientToPath: true,
+    ///             rotationCount: 5,
+    ///             bindTarget: .transform
+    ///         )
+    ///         return try? AnimationResource.generate(with: orbit)
+    ///     }
     ///
-    ///
-    ///     let orbit = OrbitAnimation(
-    ///         name: "orbit",
-    ///         duration: 300,
-    ///         axis: yAxis,
-    ///         startTransform: Transform(translation: startingPosition),
-    ///         spinClockwise: false,
-    ///         orientToPath: true,
-    ///         rotationCount: 6,
-    ///         bindTarget: .transform
-    ///     )
-    ///
-    ///     let orbitAnimation = try! AnimationResource.generate(with: orbit)
-    ///
-    ///     let text1 = foo.curveText(string1, configuration: .init(animation: orbitAnimation))
+    ///     let text1 = foo.curveText(string1, configuration: .init(animationProvider: customOrbitAnimationProvider))
     ///
     @MainActor
     public static func curveText(_ text: String, configuration: Configuration = .init()) -> Entity {
@@ -158,9 +152,10 @@ public enum TextCurver: Sendable {
             offset: configuration.offset,
             totalAngularSpan: totalAngularSpan,
             letterPadding: configuration.letterPadding,
-            yPosition: configuration.yPosition,
             animationProvider: configuration.animationProvider
         )
+        
+        finalEntity.position.y = configuration.yPosition
         
         return finalEntity
     }
@@ -235,7 +230,6 @@ public enum TextCurver: Sendable {
         offset: Float,
         totalAngularSpan: Float,
         letterPadding: Float,
-        yPosition: Float,
         animationProvider: ((ModelEntity, Transform) -> AnimationResource?)?
     ) -> Entity {
         
@@ -248,8 +242,7 @@ public enum TextCurver: Sendable {
             let x = radius * sin(currentAngle)
             let z = -radius * cos(currentAngle)
             
-            let lookAtUser = SIMD3(x, 0, z)
-            let lookAtUserNormalized = normalize(lookAtUser)
+            let lookAtUserNormalized = normalize(SIMD3(x, 0, z))
             
             char.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: lookAtUserNormalized)
             char.position = SIMD3(x, 0, z)
@@ -263,8 +256,6 @@ public enum TextCurver: Sendable {
             finalEntity.addChild(char)
             currentAngle += angleIncrement
         }
-        
-        finalEntity.position.y = yPosition
         
         return finalEntity
     }
