@@ -1,15 +1,16 @@
-//
-//  TextCurver.swift
-//  VisionTextArc
-//
-//  Created by Davide Castaldi on 15/11/24.
-//
+/*
+ Abstract:
+ 
+ This Swift utility package generates customizable 3D curved text for AR/VR environments using RealityKit. It offers a Configuration struct for detailed styling, including font, material properties, curve radius, and animations. The curveText method arranges text along a curve with optional dynamic effects, enabling rich, immersive text displays in visionOS and iOS applications.
+ 
+ As this has no further development so far, an enum is imperative to improve efficiency given their lightweith overhead, and the absence of depending methods that must be extended. Furthermore, there is no aim to create objects.
+ */
 
 import SwiftUI
 import RealityKit
 
 @MainActor
-@available(visionOS 1.0, *, iOS 13.0, *)
+@available(visionOS 2.0, *, iOS 13.0, *)
 public enum TextCurver: Sendable {
     
     /// A configuration object for customizing 3D curved text.
@@ -17,7 +18,7 @@ public enum TextCurver: Sendable {
     /// This structure defines parameters for styling and positioning text along a 3D curve.
     /// It provides fine-grained control over text appearance, material properties, and layout.
     ///
-    /// - Properties:
+    /// - ### Properties:
     ///   - `fontSize`: The size of the font used for rendering the text.
     ///   - `font`: The font resource type used for creating the text geometry.
     ///   - `extrusionDepth`: The depth of the 3D extrusion applied to each character, creating a volumetric effect.
@@ -37,20 +38,66 @@ public enum TextCurver: Sendable {
     
     @MainActor
     public struct Configuration {
+        
+        /// Define how big the text should be.
+        /// This value should range between 0 and 1 to provide correct sizes
         public var fontSize: CGFloat
+        
+        /// It allows to select fonts that are supported from Xcode
+        /// Custom fonts are allowed as long as correctly imported.
         public var font: MeshResource.Font
+        
+        /// `extrusionDepth` defines how deep the text must be
+        /// It is advised to not go farther than 1
         public var extrusionDepth: Float
+        
         public var color: UIColor
         public var roughness: MaterialScalarParameter
         public var isMetallic: Bool
+        
+        ///`radius` is defined as the flat distance for the user.
+        /// the curved text will start generate from this flat distance.
         public var radius: Float
+        
+        /// Indicates at which position of the curve the text must be
+        /// it is advised to use radians or float, as degrees are still not supported.
         public var offset: Float
+        
+        /// This value define the y offset of the text
         public var yPosition: Float
+        
+        /// The distance between each character
         public var letterPadding: Float
+        
+        /// The invisible container of the text, like an invisible rectangle.
         public var containerFrame: CGRect
+        
         public var alignment: CTTextAlignment
         public var lineBreakMode: CTLineBreakMode
+        
+        /// This is the value used for the animation.
+        /// As of now onl `AnimationResource` is supported.
         public var animationProvider: ((ModelEntity, Transform) -> AnimationResource?)?
+        
+        /**
+         Initializes a new `Configuration` instance.
+         
+         - Parameters
+            - `fontSize`: Defines the size of the font used for rendering the text. Value should range between 0 and 1.
+            - `font`: The font resource type used for creating the text geometry. Custom fonts must be imported.
+            - `extrusionDepth`: The depth of the 3D extrusion applied to each character, creating a volumetric effect.
+            - `color`: The color applied to the text material.
+            - `roughness`: The roughness of the text material's surface, affecting light scattering.
+            - `isMetallic`: Indicates whether the text material exhibits metallic properties.
+            - `radius`: The radius of the curve on which the text is laid out. Larger values position the text farther from the center.
+            - `offset`: The angular position of the text along the curve, measured in radians.
+            - `yPosition`: The Y-axis position of the text entity (vertical head movement axis).
+            - `letterPadding`: The spacing between consecutive letters, controlling text density along the curve.
+            - `containerFrame`: The 2D frame defining the text container size and positioning within the scene.
+            - `alignment`: The horizontal alignment of the text within its container (e.g., left, center, right).
+            - `lineBreakMode`: The strategy for handling line breaks, defining how text wraps within the container frame.
+            - `animationProvider`: A closure to provide animations for the text in Reality Composer Pro.
+         **/
         
         public init(
             fontSize: CGFloat = 0.12,
@@ -223,6 +270,7 @@ public enum TextCurver: Sendable {
     ///   - offset: The selected offset from the user
     ///   - totalAngularSpan: The angular span derived from the generation of 3D letters
     ///   - letterPadding: The selected padding from the user
+    ///   - animationProvider: The selected AnimationResource from the user
     /// - Returns: Returns the 3D string entity with all the parameters applied
     fileprivate static func charactersPosition(
         _ chars: [(entity: ModelEntity, width: Float)],
