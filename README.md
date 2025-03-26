@@ -40,7 +40,7 @@ Add `VisionTextArc` to your project using the Swift Package Manager:
 ```swift
 import VisionTextArc
 
-let textCurver = TextCurver.self
+let vta = TextCurver.self
 
 //Optional custom cnfiguration. More in the documentation
 let configuration = TextCurver.Configuration(
@@ -54,7 +54,7 @@ let configuration = TextCurver.Configuration(
     letterPadding: 0.05
 )
 
-let curvedTextEntity = textCurver.curveText("Custom Text", configuration: configuration)
+let curvedTextEntity = vta.curveText("Custom Text", configuration: configuration)
 ```
 
 Here is a screenshot of what can be done:
