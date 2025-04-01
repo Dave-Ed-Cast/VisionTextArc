@@ -2,12 +2,14 @@
 
 ![Swift](https://img.shields.io/badge/Swift-6-blue) ![Platform](https://img.shields.io/badge/Platform-visionOS-red) ![License](https://img.shields.io/badge/License-MIT-green)
 
-`VisionTextArc` is a visionOS framework that generates 3D curved text with customizable parameters for creative visualizations for Apple Vision Pro apps. Built on **RealityKit**, it provides an intuitive API for creating stunning, curved text effects.
+`VisionTextArc` is a visionOS package library fully open source and free, that enables 3D curved text creation with customizable parameters, perfect for Apple Vision Pro apps. Built on RealityKit, it offers an intuitive API for generating stunning, immersive text effects with ease.
 
 ---
 
 ## Why is curved text needed in visionOS
-Curved text in visionOS is useful for a variety of reasons, mainly to enhance the user experience and make it more natural and immersive in 3D spaces. Ever thought of creating a mindfulness app based on a scenery with some 3D text that is fitting to the space? Now you can with a proper curving of it!
+Curved text enhances immersion by naturally integrating into 3D spaces. Imagine a mindfulness app where text elegantly follows the contours of a scene, now possible with VisionTextArc.
+
+Designing curved text manually in Reality Composer Pro is tedious, in fact, you would d have to position each letter individually! With VisionTextArc, simply tweak a few parameters and let the package handle the rest.
 
 ---
 
